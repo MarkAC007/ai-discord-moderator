@@ -33,9 +33,9 @@ A production-ready Discord AI bot with GPT-5 integration, built with TypeScript 
 3. Go to "Bot" section and create a bot
 4. Copy the bot token and application ID
 5. Use this invite URL (replace YOUR_APP_ID):
-   ```
-   https://discord.com/api/oauth2/authorize?client_id=YOUR_APP_ID&permissions=2147485696&scope=bot%20applications.commands
-   ```
+```
+https://discord.com/api/oauth2/authorize?client_id=YOUR_APP_ID&permissions=2147485696&scope=bot%20applications.commands
+```
 
 ### 2. Get OpenAI API Key
 
