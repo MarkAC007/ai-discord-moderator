@@ -1,23 +1,22 @@
 name: Build and Push Docker Image
 
 on:
+  pull_request:
+    branches: [ main ]
   push:
     branches: [ main ]
     tags: [ 'v*.*.*' ]
-  pull_request:
-    branches: [ main ]
 
 env:
   REGISTRY: docker.io
   IMAGE_NAME: markac007/discord-ai-bot
 
 jobs:
-  build-and-push:
+  docker:
     runs-on: ubuntu-latest
     permissions:
-      contents: write
+      contents: read
       packages: write
-
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -29,92 +28,41 @@ jobs:
         uses: docker/setup-buildx-action@v3
 
       - name: Log in to Docker Hub
-        if: github.event_name != 'pull_request'
+        if: ${{ github.event_name == 'push' || (github.event_name == 'pull_request' && github.event.pull_request.head.repo.fork == false) }}
         uses: docker/login-action@v3
         with:
           registry: ${{ env.REGISTRY }}
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      - name: Set up Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-
-      - name: Read package version
-        id: pkg
-        run: echo "version=$(node -p \"require('./package.json').version\")" >> $GITHUB_OUTPUT
-
-      - name: Extract metadata
+      - name: Extract image metadata (tags, labels)
         id: meta
         uses: docker/metadata-action@v5
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
           tags: |
-            type=raw,value=latest,enable=${{ startsWith(github.ref, 'refs/heads/main') }}
-            type=raw,value=v${{ steps.pkg.outputs.version }},enable=${{ startsWith(github.ref, 'refs/heads/main') }}
-            type=sha,prefix=sha-
-            type=semver,pattern={{version}}
-            type=semver,pattern={{major}}.{{minor}}
+            # On PRs from same repo: tag with PR number and short SHA
+            type=raw,value=pr-${{ github.event.number }},enable=${{ github.event_name == 'pull_request' && github.event.pull_request.head.repo.fork == false }}
+            type=sha,prefix=pr-${{ github.event.number }}-sha-,enable=${{ github.event_name == 'pull_request' && github.event.pull_request.head.repo.fork == false }}
+
+            # On pushes to main (post-merge): tag as latest and with SHA
+            type=raw,value=latest,enable=${{ github.event_name == 'push' && startsWith(github.ref, 'refs/heads/main') }}
+            type=sha,prefix=sha-,enable=${{ github.event_name == 'push' && startsWith(github.ref, 'refs/heads/main') }}
+
+            # On version tags like v1.2.3: use semver tags
+            type=semver,pattern={{version}},enable=${{ startsWith(github.ref, 'refs/tags/v') }}
+            type=semver,pattern={{major}}.{{minor}},enable=${{ startsWith(github.ref, 'refs/tags/v') }}
 
       - name: Show computed tags
-        run: |
-          echo "Computed tags: ${{ steps.meta.outputs.tags }}"
+        run: echo "Computed tags: ${{ steps.meta.outputs.tags }}"
 
       - name: Build and push Docker image
         uses: docker/build-push-action@v5
         with:
           context: .
           platforms: linux/amd64,linux/arm64
-          push: ${{ github.event_name != 'pull_request' }}
+          push: ${{ github.event_name == 'push' || (github.event_name == 'pull_request' && github.event.pull_request.head.repo.fork == false) }}
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
-
-      - name: Generate changelog
-        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-        id: changelog
-        uses: actions/github-script@v7
-        with:
-          script: |
-            const { data: commits } = await github.rest.repos.compareCommits({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              base: context.payload.before,
-              head: context.payload.after
-            });
-            
-            const changelog = commits.commits
-              .map(commit => `- ${commit.commit.message.split('\n')[0]}`)
-              .join('\n');
-            
-            return changelog || 'No significant changes';
-
-      - name: Create Release
-        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-        uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          tag_name: v${{ github.run_number }}
-          release_name: Release v${{ github.run_number }}
-          body: |
-            ## Changes in this release:
-            
-            ${{ steps.changelog.outputs.result }}
-            
-            ## Docker Image
-            
-            The Docker image has been built and pushed to Docker Hub:
-            - `markac007/discord-ai-bot:latest`
-            - `markac007/discord-ai-bot:v${{ github.run_number }}`
-            
-            ## Quick Deploy
-            
-            ```bash
-            docker pull markac007/discord-ai-bot:latest
-            docker-compose up -d
-            ```
-          draft: false
-          prerelease: false
