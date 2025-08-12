@@ -26,7 +26,12 @@ export async function execute(interaction: ChatInputCommandInteraction): Promise
       .addFields(
         {
           name: '❓ `/ask`',
-          value: 'Ask the AI anything\n**Usage:** `/ask prompt: your question here`\n**Example:** `/ask prompt: What is the capital of France?`',
+          value: 'Ask the AI anything (supports conversation memory)\n**Usage:** `/ask prompt: your question here`\n**Example:** `/ask prompt: What is the capital of France?`\n**Features:** Remembers previous messages in your conversation',
+          inline: false
+        },
+        {
+          name: '💬 `/conversation`',
+          value: 'Manage your conversation with the AI\n**Subcommands:**\n• `/conversation clear` - Clear your conversation history\n• `/conversation info` - Show conversation statistics',
           inline: false
         },
         {
@@ -46,8 +51,13 @@ export async function execute(interaction: ChatInputCommandInteraction): Promise
         inline: false
       })
       .addFields({
+        name: '💬 Conversation Features',
+        value: '• **Memory**: Each user has their own conversation thread\n• **Context**: AI remembers previous messages in your conversation\n• **Auto-cleanup**: Conversations expire after 30 minutes of inactivity\n• **Smart truncation**: Keeps last 20 messages to stay within limits',
+        inline: false
+      })
+      .addFields({
         name: '🔧 Technical Info',
-        value: '• Model: GPT-5\n• Response time: < 8 seconds (median)\n• Max response length: 2000 tokens',
+        value: '• Model: GPT-5\n• Response time: < 8 seconds (median)\n• Max response length: 2000 tokens\n• Conversation memory: Last 20 messages',
         inline: false
       })
       .setFooter({ 

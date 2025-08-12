@@ -4,13 +4,14 @@ import {
   SlashCommandBuilder 
 } from 'discord.js';
 import { AIService } from '../services/ai';
+import { conversationManager } from '../services/conversation';
 import { rateLimiter } from '../utils/rateLimit';
 import { createRequestLogger } from '../utils/logger';
 import { v4 as uuidv4 } from 'uuid';
 
 export const data = new SlashCommandBuilder()
   .setName('ask')
-  .setDescription('Ask the AI anything')
+  .setDescription('Ask the AI anything (supports conversation memory)')
   .addStringOption(option =>
     option
       .setName('prompt')
@@ -51,9 +52,17 @@ export async function execute(interaction: ChatInputCommandInteraction): Promise
     // Defer reply to handle longer response times
     await interaction.deferReply();
 
-    // Generate AI response
+    // Get conversation history
+    const conversation = conversationManager.getConversation(userId);
+    const messages = conversation.messages;
+    
+    // Generate AI response with conversation history
     const aiService = new AIService();
-    const response = await aiService.generateResponse(prompt, requestId);
+    const response = await aiService.generateResponse(prompt, requestId, messages);
+
+    // Add messages to conversation
+    conversationManager.addMessage(userId, 'user', prompt);
+    conversationManager.addMessage(userId, 'assistant', response.content);
 
     // Create embed response
     const embed = new EmbedBuilder()
@@ -65,6 +74,13 @@ export async function execute(interaction: ChatInputCommandInteraction): Promise
         iconURL: interaction.user.displayAvatarURL()
       })
       .setTimestamp();
+
+    // Add conversation info
+    embed.addFields({
+      name: '💬 Conversation',
+      value: `${conversation.messageCount} messages in this thread`,
+      inline: true
+    });
 
     // Add usage info if available
     if (response.usage) {
@@ -87,7 +103,8 @@ export async function execute(interaction: ChatInputCommandInteraction): Promise
 
     requestLogger.info('Ask command completed successfully', {
       responseLength: response.content.length,
-      usage: response.usage
+      usage: response.usage,
+      conversationLength: messages.length
     });
 
   } catch (error) {

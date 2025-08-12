@@ -1,5 +1,6 @@
 import OpenAI from 'openai';
 import { logger } from '../utils/logger';
+import { ConversationMessage } from './conversation';
 
 export interface AIResponse {
   content: string;
@@ -27,29 +28,46 @@ export class AIService {
     });
   }
 
-  async generateResponse(prompt: string, requestId: string): Promise<AIResponse> {
+  async generateResponse(prompt: string, requestId: string, messages?: ConversationMessage[]): Promise<AIResponse> {
     const requestLogger = logger.child({ requestId });
     
     try {
       requestLogger.info('Generating AI response', { 
         promptLength: prompt.length,
-        model: this.model 
+        model: this.model,
+        hasHistory: !!messages && messages.length > 1
       });
 
       const startTime = Date.now();
       
+      // Use conversation history if provided, otherwise start fresh
+      const messageHistory = messages || [
+        {
+          role: 'system' as const,
+          content: 'You are a helpful AI assistant in a Discord server. Provide clear, concise, and accurate responses. Use Discord markdown formatting when appropriate.',
+          timestamp: Date.now()
+        }
+      ];
+
+      // Add the current user message
+      const allMessages = [
+        ...messageHistory,
+        {
+          role: 'user' as const,
+          content: prompt,
+          timestamp: Date.now()
+        }
+      ];
+
+      // Convert to OpenAI format
+      const openaiMessages = allMessages.map(msg => ({
+        role: msg.role,
+        content: msg.content
+      }));
+      
       const completion = await this.client.chat.completions.create({
         model: this.model,
-        messages: [
-          {
-            role: 'system',
-            content: 'You are a helpful AI assistant in a Discord server. Provide clear, concise, and accurate responses. Use Discord markdown formatting when appropriate.'
-          },
-          {
-            role: 'user',
-            content: prompt
-          }
-        ],
+        messages: openaiMessages,
         max_completion_tokens: this.maxTokens,
       });
 
@@ -59,7 +77,8 @@ export class AIService {
       requestLogger.info('AI response generated successfully', {
         responseTime,
         responseLength: response.length,
-        usage: completion.usage
+        usage: completion.usage,
+        messageCount: allMessages.length
       });
 
       return {

@@ -12,6 +12,7 @@ import { AIService } from './services/ai';
 import * as askCommand from './commands/ask';
 import * as helpCommand from './commands/help';
 import * as pingCommand from './commands/ping';
+import * as conversationCommand from './commands/conversation';
 
 interface Command {
   data: any;
@@ -93,6 +94,7 @@ export class Bot {
     this.commands.set(askCommand.data.name, askCommand);
     this.commands.set(helpCommand.data.name, helpCommand);
     this.commands.set(pingCommand.data.name, pingCommand);
+    this.commands.set(conversationCommand.data.name, conversationCommand);
 
     logger.info('Commands registered', { 
       commandCount: this.commands.size,
