@@ -1,6 +1,7 @@
 import OpenAI from 'openai';
 import { logger } from '../utils/logger';
 import { ConversationMessage } from './conversation';
+import { modelManager } from './modelManager';
 
 export interface AIResponse {
   content: string;
@@ -13,7 +14,6 @@ export interface AIResponse {
 
 export class AIService {
   private client: OpenAI;
-  private readonly model: string = 'gpt-5';
   private readonly maxTokens: number;
 
   constructor() {
@@ -31,13 +31,14 @@ export class AIService {
     this.maxTokens = Number.isFinite(configuredMax) && configuredMax > 0 ? configuredMax : 4000;
   }
 
-  async generateResponse(prompt: string, requestId: string, messages?: ConversationMessage[]): Promise<AIResponse> {
+  async generateResponse(prompt: string, requestId: string, messages?: ConversationMessage[], guildId?: string | null): Promise<AIResponse> {
     const requestLogger = logger.child({ requestId });
     
     try {
+      const activeModel = modelManager.getModelForGuild(guildId);
       requestLogger.info('Generating AI response', { 
         promptLength: prompt.length,
-        model: this.model,
+        model: activeModel,
         hasHistory: !!messages && messages.length > 1
       });
 
@@ -69,7 +70,7 @@ export class AIService {
       }));
       
       const completion = await this.client.chat.completions.create({
-        model: this.model,
+        model: activeModel,
         messages: openaiMessages,
         max_completion_tokens: this.maxTokens,
       });
@@ -143,15 +144,17 @@ export class AIService {
   async generateResponseWithWebSearch(
     prompt: string,
     requestId: string,
-    messages?: ConversationMessage[]
+    messages?: ConversationMessage[],
+    guildId?: string | null
   ): Promise<AIResponse> {
     const requestLogger = logger.child({ requestId });
     const country = process.env['DEFAULT_COUNTRY_CODE'] || 'GB';
 
     try {
+      const activeModel = modelManager.getModelForGuild(guildId);
       requestLogger.info('Generating AI response with web search', {
         promptLength: prompt.length,
-        model: this.model,
+        model: activeModel,
         hasHistory: !!messages && messages.length > 1,
         country
       });
@@ -159,7 +162,7 @@ export class AIService {
       const transcript = this.buildTranscript(messages, prompt);
 
       const responseAny: any = await (this.client as any).responses.create({
-        model: this.model,
+        model: activeModel,
         input: transcript,
         text: {
           format: { type: 'text' },

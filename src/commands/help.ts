@@ -36,6 +36,11 @@ export async function execute(interaction: ChatInputCommandInteraction): Promise
           inline: false
         },
         {
+          name: '🧠 `/model`',
+          value: 'Manage the AI model for this server\n**Subcommands:**\n• `/model list` - Show available models\n• `/model current` - Show current model\n• `/model set model:[name]` - Set active model (admin only)',
+          inline: false
+        },
+        {
           name: '❓ `/help`',
           value: 'Show this help message\n**Usage:** `/help`',
           inline: false

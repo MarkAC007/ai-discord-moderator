@@ -1,0 +1,7 @@
+{
+  "version": 1,
+  "defaultModel": "gpt-5",
+  "guildModels": {
+    "1404397165656277125": "gpt-5-nano"
+  }
+}
