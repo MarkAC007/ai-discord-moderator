@@ -26,7 +26,7 @@ export async function execute(interaction: ChatInputCommandInteraction): Promise
       .addFields(
         {
           name: '❓ `/ask`',
-          value: 'Ask the AI anything (supports conversation memory)\n**Usage:** `/ask prompt: your question here`\n**Example:** `/ask prompt: What is the capital of France?`\n**Features:** Remembers previous messages in your conversation',
+          value: 'Ask the AI anything (supports conversation memory)\n**Usage:** `/ask prompt: your question here [web: true]`\n**Example:** `/ask prompt: What happened in today\'s Apple event? web: true`\n**Features:** Remembers previous messages in your conversation; optional live web search',
           inline: false
         },
         {
@@ -57,7 +57,7 @@ export async function execute(interaction: ChatInputCommandInteraction): Promise
       })
       .addFields({
         name: '🔧 Technical Info',
-        value: '• Model: GPT-5\n• Response time: < 8 seconds (median)\n• Max response length: 2000 tokens\n• Conversation memory: Last 20 messages',
+        value: '• `/ask` model: GPT-5 (supports optional web search)\n• Max response length: up to 2000 tokens for `/ask`',
         inline: false
       })
       .setFooter({ 
