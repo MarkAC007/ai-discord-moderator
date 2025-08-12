@@ -20,7 +20,11 @@ export class ConversationManager {
 
   constructor() {
     // Clean up old conversations every 5 minutes
-    setInterval(() => this.cleanup(), 5 * 60 * 1000);
+    const intervalHandle = setInterval(() => this.cleanup(), 5 * 60 * 1000);
+    // Do not keep the Node.js event loop alive for this background interval
+    if (typeof (intervalHandle as any).unref === 'function') {
+      (intervalHandle as any).unref();
+    }
   }
 
   getConversation(userId: string): Conversation {

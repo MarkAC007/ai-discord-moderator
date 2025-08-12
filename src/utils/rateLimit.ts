@@ -73,6 +73,11 @@ class RateLimiter {
 export const rateLimiter = new RateLimiter();
 
 // Clean up old entries every 5 minutes
-setInterval(() => {
+const cleanupInterval = setInterval(() => {
   rateLimiter.cleanup();
 }, 5 * 60 * 1000);
+
+// Do not keep the Node.js event loop alive for this background interval
+if (typeof (cleanupInterval as any).unref === 'function') {
+  (cleanupInterval as any).unref();
+}

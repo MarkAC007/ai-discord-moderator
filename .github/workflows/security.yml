@@ -40,23 +40,20 @@ jobs:
       uses: docker/setup-buildx-action@v3
 
     - name: Build Docker image
-      run: docker build -t discord-ai-bot .
+      run: docker build -t discord-ai-bot:latest .
 
-    - name: Run Docker Scout vulnerability scanner
-      run: |
-        # Run Docker Scout and generate SARIF report
-        docker scout cves discord-ai-bot --format sarif --output scout-results.sarif || true
-        
-        # If no SARIF file was created, create an empty one
-        if [ ! -f scout-results.sarif ]; then
-          echo '{"version": "2.1.0", "$schema": "https://json.schemastore.org/sarif-2.1.0-rtm.5.json", "runs": []}' > scout-results.sarif
-        fi
-        
-        # Run exit code check separately
-        docker scout cves discord-ai-bot --exit-code
+    - name: Analyze image with Docker Scout
+      id: docker-scout
+      uses: docker/scout-action@v1
+      with:
+        command: cves
+        image: discord-ai-bot:latest
+        sarif-file: scout-results.sarif
+        summary: true
 
     - name: Upload Docker Scout scan results to GitHub Security tab
       uses: github/codeql-action/upload-sarif@v3
       if: always()
       with:
         sarif_file: 'scout-results.sarif'
+        category: 'docker-scout'
