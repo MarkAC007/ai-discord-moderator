@@ -69,13 +69,7 @@ This roadmap outlines our development plan for the Discord AI Knowledge Bot, des
   - Applies to GPT-5 family only for `/ask`: gpt-5, gpt-5-mini, gpt-5-nano
   - Deep research model is exposed via a dedicated command and is not part of model switching
 
-- [ ] **Deep Research Command**
-  - `/research [query]` - Deep, multi-step reasoning
-  - Uses `o4-mini-deep-research-2025-06-26`
-  - Produces structured reports with findings, assumptions, and next steps
-  - Higher token budget; subject to rate limits
-
-- [ ] **Basic Web Search**
+- [x] **Basic Web Search**
   - Automatic web search for relevant queries
   - Simple URL citations appended to responses
   - No complex allowlisting or confidence scoring
@@ -94,7 +88,6 @@ This roadmap outlines our development plan for the Discord AI Knowledge Bot, des
 
 ### 🎯 Success Metrics
 - [ ] Model switching works reliably (GPT-5 family only for `/ask`)
-- [ ] Deep research command produces useful, structured reports
 - [ ] Web search provides relevant citations
 - [ ] Streaming improves perceived performance
 - [ ] No increase in error rates
