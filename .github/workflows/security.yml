@@ -1,0 +1,70 @@
+name: Security Scan
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  schedule:
+    - cron: '0 2 * * 1'  # Run weekly on Mondays at 2 AM
+
+jobs:
+  dependency-check:
+    permissions:
+      contents: read
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Use Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20.x'
+        cache: 'npm'
+
+    - name: Install dependencies
+      run: npm ci
+
+    - name: Run npm audit
+      run: npm audit --audit-level=moderate
+
+  container-scan:
+    runs-on: ubuntu-latest
+    needs: dependency-check
+    permissions:
+      contents: read
+      pull-requests: write
+      security-events: write
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v3
+
+    - name: Log in to Docker Hub
+      uses: docker/login-action@v3
+      with:
+        registry: docker.io
+        username: ${{ secrets.DOCKERHUB_USERNAME }}
+        password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+    - name: Build Docker image
+      run: docker build -t discord-ai-bot:latest .
+
+    - name: Analyze image with Docker Scout
+      id: docker-scout
+      uses: docker/scout-action@v1
+      with:
+        command: cves
+        image: discord-ai-bot:latest
+        sarif-file: scout-results.sarif
+        summary: true
+
+    - name: Upload Docker Scout scan results to GitHub Security tab
+      uses: github/codeql-action/upload-sarif@v3
+      if: always() && hashFiles('scout-results.sarif') != ''
+      with:
+        sarif_file: 'scout-results.sarif'
+        category: 'docker-scout'
