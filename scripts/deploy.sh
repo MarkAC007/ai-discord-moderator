@@ -35,7 +35,49 @@ fi
 
 # Validate required environment variables
 echo "🔍 Checking environment variables..."
-source .env
+
+# Safe .env parser - replaces insecure 'source .env'
+load_env_safe() {
+    local env_file="$1"
+    
+    if [ ! -f "$env_file" ]; then
+        echo "❌ Environment file $env_file not found"
+        return 1
+    fi
+    
+    while IFS= read -r line || [ -n "$line" ]; do
+        # Skip empty lines and comments
+        if [[ -z "$line" || "$line" =~ ^[[:space:]]*# ]]; then
+            continue
+        fi
+        
+        # Remove leading/trailing whitespace
+        line=$(echo "$line" | sed 's/^[[:space:]]*//;s/[[:space:]]*$//')
+        
+        # Validate KEY=VALUE pattern with safe characters
+        # Key: alphanumeric, underscore, hyphen only
+        # Value: any character except newline
+        if [[ "$line" =~ ^([a-zA-Z_][a-zA-Z0-9_-]*)=(.*)$ ]]; then
+            local key="${BASH_REMATCH[1]}"
+            local value="${BASH_REMATCH[2]}"
+            
+            # Strip surrounding quotes from value (single or double quotes)
+            if [[ "$value" =~ ^\"(.*)\"$ ]]; then
+                value="${BASH_REMATCH[1]}"
+            elif [[ "$value" =~ ^\'(.*)\'$ ]]; then
+                value="${BASH_REMATCH[1]}"
+            fi
+            
+            # Export the variable safely
+            export "$key"="$value"
+        else
+            echo "⚠️  Skipping invalid line in .env: $line"
+        fi
+    done < "$env_file"
+}
+
+# Load environment variables safely
+load_env_safe .env
 
 if [ -z "$DISCORD_BOT_TOKEN" ]; then
     echo "❌ DISCORD_BOT_TOKEN is not set in .env"
