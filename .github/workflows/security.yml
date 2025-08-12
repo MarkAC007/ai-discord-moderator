@@ -36,18 +36,19 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v4
 
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v3
+
     - name: Build Docker image
       run: docker build -t discord-ai-bot .
 
-    - name: Run Trivy vulnerability scanner
-      uses: aquasecurity/trivy-action@v0.32.0
-      with:
-        image-ref: 'discord-ai-bot:latest'
-        format: 'sarif'
-        output: 'trivy-results.sarif'
+    - name: Run Docker Scout vulnerability scanner
+      run: |
+        docker scout cves discord-ai-bot --format sarif --output scout-results.sarif
+        docker scout cves discord-ai-bot --exit-code
 
-    - name: Upload Trivy scan results to GitHub Security tab
+    - name: Upload Docker Scout scan results to GitHub Security tab
       uses: github/codeql-action/upload-sarif@v3
       if: always()
       with:
-        sarif_file: 'trivy-results.sarif'
+        sarif_file: 'scout-results.sarif'
