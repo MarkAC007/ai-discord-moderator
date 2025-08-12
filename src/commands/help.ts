@@ -18,6 +18,7 @@ export async function execute(interaction: ChatInputCommandInteraction): Promise
 
   try {
     requestLogger.info('Processing help command', { userId, guildId });
+    const maxTokens = Number(process.env['MAX_COMPLETION_TOKENS'] || 4000);
 
     const embed = new EmbedBuilder()
       .setColor(0x00FF00)
@@ -32,6 +33,11 @@ export async function execute(interaction: ChatInputCommandInteraction): Promise
         {
           name: '💬 `/conversation`',
           value: 'Manage your conversation with the AI\n**Subcommands:**\n• `/conversation clear` - Clear your conversation history\n• `/conversation info` - Show conversation statistics',
+          inline: false
+        },
+        {
+          name: '🧠 `/model`',
+          value: 'Manage the AI model for this server\n**Subcommands:**\n• `/model list` - Show available models\n• `/model current` - Show current model\n• `/model set model:[name]` - Set active model (admin only)',
           inline: false
         },
         {
@@ -52,12 +58,12 @@ export async function execute(interaction: ChatInputCommandInteraction): Promise
       })
       .addFields({
         name: '💬 Conversation Features',
-        value: '• **Memory**: Each user has their own conversation thread\n• **Context**: AI remembers previous messages in your conversation\n• **Auto-cleanup**: Conversations expire after 30 minutes of inactivity\n• **Smart truncation**: Keeps last 20 messages to stay within limits',
+        value: '• **Memory**: Each user has their own conversation thread\n• **Context**: AI remembers previous messages in your conversation\n• **Auto-cleanup**: Conversations expire after 30 minutes of inactivity\n• **Smart truncation**: Keeps last 20 messages; extended token limit enables richer context',
         inline: false
       })
       .addFields({
         name: '🔧 Technical Info',
-        value: '• `/ask` model: GPT-5 (supports optional web search)\n• Max response length: up to 2000 tokens for `/ask`',
+        value: `• \`/ask\` model: GPT-5 (supports optional web search)\n• Max response length: up to ${maxTokens} tokens (configurable via \`MAX_COMPLETION_TOKENS\`)`,
         inline: false
       })
       .setFooter({ 

@@ -66,8 +66,8 @@ export async function execute(interaction: ChatInputCommandInteraction): Promise
     // Generate AI response
     const aiService = new AIService();
     const response = useWeb
-      ? await aiService.generateResponseWithWebSearch(prompt, requestId, messages)
-      : await aiService.generateResponse(prompt, requestId, messages);
+      ? await aiService.generateResponseWithWebSearch(prompt, requestId, messages, interaction.guildId)
+      : await aiService.generateResponse(prompt, requestId, messages, interaction.guildId);
 
     // Add messages to conversation
     conversationManager.addMessage(userId, 'user', prompt);

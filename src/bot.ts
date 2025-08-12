@@ -13,6 +13,7 @@ import * as askCommand from './commands/ask';
 import * as helpCommand from './commands/help';
 import * as pingCommand from './commands/ping';
 import * as conversationCommand from './commands/conversation';
+import * as modelCommand from './commands/model';
 
 interface Command {
   data: any;
@@ -95,6 +96,7 @@ export class Bot {
     this.commands.set(helpCommand.data.name, helpCommand);
     this.commands.set(pingCommand.data.name, pingCommand);
     this.commands.set(conversationCommand.data.name, conversationCommand);
+    this.commands.set(modelCommand.data.name, modelCommand);
 
     logger.info('Commands registered', { 
       commandCount: this.commands.size,
