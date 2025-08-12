@@ -149,6 +149,8 @@ npm start
 - `LOG_LEVEL` - Log level (debug, info, warn, error) - Default: info
 - `NODE_ENV` - Environment (development, production) - Default: production
 - `PORT` - Health check port - Default: 3000
+- `DEFAULT_COUNTRY_CODE` - Two-letter country code for web search localization (e.g., GB, US) - Default: GB
+- `MAX_COMPLETION_TOKENS` - Max output tokens for responses (chat and web search) - Default: 4000
 
 ## Docker Information
 

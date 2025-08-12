@@ -18,6 +18,12 @@ export const data = new SlashCommandBuilder()
       .setDescription('Your question or prompt')
       .setRequired(true)
       .setMaxLength(2000)
+  )
+  .addBooleanOption(option =>
+    option
+      .setName('web')
+      .setDescription('Enable web search (uses live information when relevant)')
+      .setRequired(false)
   );
 
 export async function execute(interaction: ChatInputCommandInteraction): Promise<void> {
@@ -42,6 +48,7 @@ export async function execute(interaction: ChatInputCommandInteraction): Promise
     }
 
     const prompt = interaction.options.getString('prompt', true);
+    const useWeb = interaction.options.getBoolean('web') || false;
     
     requestLogger.info('Processing ask command', { 
       promptLength: prompt.length,
@@ -56,9 +63,11 @@ export async function execute(interaction: ChatInputCommandInteraction): Promise
     const conversation = conversationManager.getConversation(userId);
     const messages = conversation.messages;
     
-    // Generate AI response with conversation history
+    // Generate AI response
     const aiService = new AIService();
-    const response = await aiService.generateResponse(prompt, requestId, messages);
+    const response = useWeb
+      ? await aiService.generateResponseWithWebSearch(prompt, requestId, messages)
+      : await aiService.generateResponse(prompt, requestId, messages);
 
     // Add messages to conversation
     conversationManager.addMessage(userId, 'user', prompt);
@@ -87,6 +96,14 @@ export async function execute(interaction: ChatInputCommandInteraction): Promise
       embed.addFields({
         name: '📊 Usage',
         value: `Tokens: ${response.usage.totalTokens} (${response.usage.promptTokens} + ${response.usage.completionTokens})`,
+        inline: true
+      });
+    }
+
+    if (useWeb) {
+      embed.addFields({
+        name: '🌐 Web',
+        value: 'Web search enabled',
         inline: true
       });
     }
