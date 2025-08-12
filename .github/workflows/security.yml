@@ -44,7 +44,15 @@ jobs:
 
     - name: Run Docker Scout vulnerability scanner
       run: |
-        docker scout cves discord-ai-bot --format sarif --output scout-results.sarif
+        # Run Docker Scout and generate SARIF report
+        docker scout cves discord-ai-bot --format sarif --output scout-results.sarif || true
+        
+        # If no SARIF file was created, create an empty one
+        if [ ! -f scout-results.sarif ]; then
+          echo '{"version": "2.1.0", "$schema": "https://json.schemastore.org/sarif-2.1.0-rtm.5.json", "runs": []}' > scout-results.sarif
+        fi
+        
+        # Run exit code check separately
         docker scout cves discord-ai-bot --exit-code
 
     - name: Upload Docker Scout scan results to GitHub Security tab
