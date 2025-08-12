@@ -1,20 +1,23 @@
 # Discord AI Bot
 
-A production-ready Discord AI bot with GPT-5 integration, built with TypeScript and deployable via Docker Compose.
+A production-ready Discord AI bot with GPT-5 integration, built with TypeScript and deployable via Docker Compose. Features multi-turn conversations with memory and intelligent context management.
 
 ## Features
 
 - 🤖 **AI-Powered Chat**: Ask questions and get intelligent responses using OpenAI's GPT-5
+- 💬 **Conversation Memory**: Multi-turn conversations with context awareness
 - ⚡ **Fast Response**: Median latency < 8 seconds for standard queries
 - 🛡️ **Rate Limiting**: 10 requests per user per minute to prevent abuse
 - 📊 **Usage Tracking**: Monitor token usage and response times
-- 🐳 **Docker Ready**: Easy deployment with Docker Compose
+- 🐳 **Docker Ready**: Easy deployment with Docker Compose and Docker Hub
 - 📝 **Structured Logging**: JSON logs for easy monitoring and debugging
 - 🔧 **Minimal Permissions**: Only requires basic Discord bot permissions
 
 ## Commands
 
-- `/ask [prompt]` - Ask the AI anything (max 2000 characters)
+- `/ask [prompt]` - Ask the AI anything with conversation memory (max 2000 characters)
+- `/conversation clear` - Clear your conversation history and start fresh
+- `/conversation info` - Show information about your current conversation
 - `/help` - Show available commands and usage
 - `/ping` - Check bot responsiveness and latency
 
@@ -22,7 +25,7 @@ A production-ready Discord AI bot with GPT-5 integration, built with TypeScript 
 
 ### Prerequisites
 
-- Node.js 20+ or Docker & Docker Compose
+- Docker & Docker Compose (recommended) or Node.js 20+
 - Discord Bot Token and Application ID
 - OpenAI API Key with GPT-5 access
 
@@ -45,7 +48,27 @@ https://discord.com/api/oauth2/authorize?client_id=YOUR_APP_ID&permissions=21474
 
 ### 3. Deploy with Docker (Recommended)
 
-#### Option A: Automated Deployment Script
+#### Option A: Using Docker Hub Image (Fastest)
+
+```bash
+# Clone the repository
+git clone <repository-url>
+cd discord-ai-bot
+
+# Copy environment file
+cp .env.example .env
+
+# Edit .env with your credentials
+nano .env
+
+# Start the bot using Docker Hub image
+docker-compose up -d
+
+# Check logs
+docker-compose logs -f bot
+```
+
+#### Option B: Automated Deployment Script
 
 **Linux/macOS:**
 ```bash
@@ -68,7 +91,7 @@ cd discord-ai-bot
 scripts\deploy.bat
 ```
 
-#### Option B: Manual Deployment
+#### Option C: Manual Docker Build
 
 ```bash
 # Clone the repository
@@ -76,19 +99,19 @@ git clone <repository-url>
 cd discord-ai-bot
 
 # Copy environment file
-cp env.example .env
+cp .env.example .env
 
 # Edit .env with your credentials
 nano .env
 
-# Start the bot
-docker-compose up -d
+# Build and start the bot
+docker-compose up -d --build
 
 # Check logs
 docker-compose logs -f bot
 ```
 
-### 4. Deploy Locally
+### 4. Deploy Locally (Development)
 
 ```bash
 # Install dependencies
@@ -98,7 +121,7 @@ npm install
 npm run build
 
 # Copy environment file
-cp env.example .env
+cp .env.example .env
 
 # Edit .env with your credentials
 nano .env
@@ -119,7 +142,30 @@ npm start
 - `NODE_ENV` - Environment (development, production) - Default: production
 - `PORT` - Health check port - Default: 3000
 
-## Docker Commands
+## Docker Information
+
+### Docker Hub Image
+
+The bot is available on Docker Hub: `markac007/discord-ai-bot`
+
+```bash
+# Pull the latest image
+docker pull markac007/discord-ai-bot:latest
+
+# Pull a specific version
+docker pull markac007/discord-ai-bot:v1.0.0
+```
+
+### Docker Compose Configuration
+
+The `docker-compose.yml` file includes:
+- **Multi-stage build** for optimized production image
+- **Health checks** for monitoring
+- **Log rotation** (10MB max, 3 files)
+- **Graceful shutdown** handling
+- **Non-root user** for security
+
+### Docker Commands
 
 ```bash
 # Start the bot
@@ -137,7 +183,49 @@ docker-compose restart bot
 # Update and restart
 docker-compose pull
 docker-compose up -d
+
+# Check container status
+docker-compose ps
+
+# View resource usage
+docker stats
 ```
+
+### Docker Image Details
+
+- **Base Image**: Node.js 20 Alpine
+- **Size**: ~150MB (optimized)
+- **Architecture**: Multi-stage build
+- **Security**: Non-root user, minimal permissions
+- **Health Check**: HTTP endpoint on port 3000
+
+## Conversation Features
+
+### Multi-Turn Conversations
+
+The bot now supports **true conversation memory**:
+
+- **Per-user threads**: Each user has their own conversation thread
+- **Context awareness**: AI remembers previous messages in the conversation
+- **Smart truncation**: Keeps last 20 messages to stay within token limits
+- **Auto-cleanup**: Conversations expire after 30 minutes of inactivity
+
+### Example Conversation Flow
+
+```
+User: /ask prompt: What is Python?
+Bot: Python is a programming language...
+
+User: /ask prompt: What are its main features?
+Bot: Based on our conversation about Python, its main features include...
+```
+
+### Conversation Management
+
+- **`/conversation clear`** - Start a fresh conversation
+- **`/conversation info`** - View conversation statistics
+- **Automatic cleanup** - Old conversations are automatically removed
+- **Memory limits** - Prevents token overflow with smart truncation
 
 ## Development
 
@@ -174,6 +262,7 @@ The bot follows a simple 3-layer architecture:
 - **Bot Client** (`src/bot.ts`): Discord.js client setup and event handling
 - **Command Handler**: Validates inputs and routes to appropriate commands
 - **AI Service** (`src/services/ai.ts`): OpenAI integration with error handling
+- **Conversation Manager** (`src/services/conversation.ts`): Multi-turn conversation handling
 - **Logger** (`src/utils/logger.ts`): Structured JSON logging
 - **Rate Limiter** (`src/utils/rateLimit.ts`): Per-user rate limiting
 
@@ -187,12 +276,14 @@ All logs are structured JSON and include:
 - Request ID for tracing
 - User ID and Guild ID for context
 - Response times and usage statistics
+- Conversation information
 - Error details with stack traces
 
 ### Metrics
 - Response time: P50 < 8s, P95 < 15s
 - Uptime target: 99% for first month
 - Rate limiting: 10 requests per user per minute
+- Conversation memory: Last 20 messages per user
 
 ## Security
 
@@ -201,6 +292,8 @@ All logs are structured JSON and include:
 - Input validation on all commands
 - Rate limiting per user
 - Minimal Discord permissions required
+- Non-root Docker container
+- Multi-stage Docker build for smaller attack surface
 
 ## Troubleshooting
 
@@ -221,6 +314,11 @@ All logs are structured JSON and include:
    - Monitor OpenAI response times in logs
    - Consider server location
 
+4. **Conversation not working**
+   - Check if conversation memory is being used: `/conversation info`
+   - Verify the bot is using conversation history in logs
+   - Try clearing and restarting: `/conversation clear`
+
 ### Log Analysis
 
 ```bash
@@ -232,6 +330,31 @@ docker-compose logs bot | grep "AI response generated"
 
 # Check rate limiting
 docker-compose logs bot | grep "Rate limit exceeded"
+
+# Monitor conversations
+docker-compose logs bot | grep "Message added to conversation"
+
+# Check conversation cleanup
+docker-compose logs bot | grep "Cleaned up old conversations"
+```
+
+### Docker Troubleshooting
+
+```bash
+# Check container health
+docker-compose ps
+
+# View container logs
+docker-compose logs bot
+
+# Restart container
+docker-compose restart bot
+
+# Check resource usage
+docker stats
+
+# Verify image
+docker images markac007/discord-ai-bot
 ```
 
 ## Contributing
@@ -256,6 +379,7 @@ For issues and questions:
 ## Roadmap
 
 ### v1.1 (2 weeks after v1.0)
+- Discord thread creation for conversations
 - Model switching commands
 - Basic web search
 - Response streaming
@@ -264,9 +388,11 @@ For issues and questions:
 - Channel summarization
 - Image analysis
 - Advanced configuration
+- Conversation export/import
 
 ### v2.0 (Month 3-4)
 - Multiple reply modes
 - Per-channel settings
 - Personality presets
 - Web search allowlisting
+- Conversation analytics
