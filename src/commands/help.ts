@@ -31,6 +31,11 @@ export async function execute(interaction: ChatInputCommandInteraction): Promise
           inline: false
         },
         {
+          name: '🧾 `/summarize`',
+          value: 'Summarize channel history over a selected time window.\n**Usage:** `/summarize range: 24h [channel: #general] [include_bots: false] [max_messages: 1000] [visibility: ephemeral]`\n**Options:** `range` one of `1h, 6h, 24h, 3d, 7d, 30d`; `channel` optional; `include_bots` optional; `max_messages` 100–5000; `visibility` public (Manage Server required) or ephemeral (default).',
+          inline: false
+        },
+        {
           name: '💬 `/conversation`',
           value: 'Manage your conversation with the AI\n**Subcommands:**\n• `/conversation clear` - Clear your conversation history\n• `/conversation info` - Show conversation statistics',
           inline: false
