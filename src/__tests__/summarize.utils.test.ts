@@ -17,7 +17,7 @@ describe('summarize utils', () => {
     const text = 'a'.repeat(5000) + '\n' + 'b'.repeat(5000);
     const chunks = chunkText(text, { maxCharsPerChunk: 4000 });
     expect(chunks.length).toBeGreaterThan(2);
-    expect(chunks[0].length).toBeLessThanOrEqual(4000);
+    expect(chunks[0]!.length).toBeLessThanOrEqual(4000);
   });
 
   test('buildCorpus normalizes and truncates messages', () => {
