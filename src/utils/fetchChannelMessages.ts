@@ -1,4 +1,4 @@
-import { AnyThreadChannel, GuildTextBasedChannel, Message, PartialMessage } from 'discord.js';
+import { AnyThreadChannel, GuildTextBasedChannel, Message } from 'discord.js';
 
 export type TextLikeChannel = GuildTextBasedChannel | AnyThreadChannel;
 
@@ -28,7 +28,11 @@ export async function fetchMessagesInWindow(
     const remaining = opts.maxMessages - messages.length;
     const fetchLimit = Math.min(limitPerPage, remaining);
 
-    const page = await channel.messages.fetch({ limit: fetchLimit, before: beforeId });
+    const fetchOptions: { limit: number; before?: string } = { limit: fetchLimit };
+    if (beforeId) {
+      fetchOptions.before = beforeId;
+    }
+    const page = await channel.messages.fetch(fetchOptions);
     if (page.size === 0) break;
 
     let reachedOlderThanWindow = false;

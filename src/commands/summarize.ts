@@ -149,7 +149,7 @@ export async function execute(interaction: ChatInputCommandInteraction): Promise
 
     let finalSummary: string;
     if (chunks.length === 1) {
-      finalSummary = await summarizeChunk(chunks[0]);
+      finalSummary = await summarizeChunk(chunks[0]!);
     } else {
       const partials: string[] = [];
       for (const c of chunks) {
