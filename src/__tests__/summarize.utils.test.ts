@@ -37,7 +37,8 @@ describe('summarize utils', () => {
     const res = buildCorpus(messages as any, { maxMessageLength: 100 });
     expect(res.totalMessages).toBe(3);
     expect(res.truncatedCount).toBe(1);
-    expect(res.corpus.split('\n').length).toBe(2); // one skipped
+    // Now includes a fallback line for empty content (embed/attachments/event)
+    expect(res.corpus.split('\n').length).toBe(3);
     expect(res.corpus).toContain('hello world');
   });
 });
