@@ -134,7 +134,7 @@ export async function execute(interaction: ChatInputCommandInteraction): Promise
     // Summarize using two-pass approach if needed
     const ai = new AIService();
 
-    const systemPrompt = 'You are an expert summarizer for Discord channel histories. Produce a concise, neutral summary for readers who did not follow the conversation. Structure your output with: short overview paragraph; 3–7 key topics as bullets; optional actions/decisions; brief sentiment/engagement. Avoid sensitive verbatim quotes; prefer paraphrases.';
+    const systemPrompt = 'You are an expert summarizer for Discord channel histories. Use the provided normalized transcript lines. Do not claim content is missing; summarize from what is available (including embed/attachment placeholders). Structure your output: overview paragraph; 3–7 key topics as bullets; optional actions/decisions; brief sentiment/engagement. Avoid sensitive verbatim quotes; prefer paraphrases.';
 
     const channelName = (targetChannel && 'name' in targetChannel) ? (targetChannel as any).name : '#current';
 
