@@ -28,6 +28,7 @@ A production-ready Discord AI bot with GPT-5 integration, built with TypeScript 
 - `/conversation info` - Show information about your current conversation
 - `/help` - Show available commands and usage
 - `/ping` - Check bot responsiveness and latency
+ - `/summarize` - Summarize channel history over a selected time window
 
 ## Quick Start
 
@@ -229,6 +230,23 @@ Bot: Python is a programming language...
 User: /ask prompt: What are its main features?
 Bot: Based on our conversation about Python, its main features include...
 ```
+
+### Channel Summary
+
+The bot can summarize channel history with `/summarize`.
+
+```
+/summarize range: 24h channel: #general include_bots: false max_messages: 1000 visibility: ephemeral
+```
+
+Options:
+- `range` (required): one of `1h`, `6h`, `24h`, `3d`, `7d`, `30d`
+- `channel` (optional): defaults to current channel; text-based channels/threads only
+- `include_bots` (optional, default `false`)
+- `max_messages` (optional, default `1000`, min `100`, max `5000`)
+- `visibility` (optional, default `ephemeral`): `ephemeral` or `public` (requires Manage Server)
+
+Output includes an overview, key topics, and basic stats (messages scanned, participants).
 
 ### Conversation Management
 
