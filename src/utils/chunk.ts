@@ -9,7 +9,7 @@ export function chunkText(text: string, options: ChunkOptions): string[] {
   const chunks: string[] = [];
   let start = 0;
   while (start < text.length) {
-    let end = Math.min(start + max, text.length);
+    const end = Math.min(start + max, text.length);
 
     // Try to cut on newline or sentence boundary for cleaner chunks
     const slice = text.slice(start, end);
