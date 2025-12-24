@@ -1,12 +1,14 @@
 # Discord AI Bot
 
-[![Build and Push Docker Image](https://github.com/markac007/ai-discord-moderator/actions/workflows/docker-build.yml/badge.svg)](https://github.com/markac007/ai-discord-moderator/actions/workflows/docker-build.yml)
-[![Security Scan](https://github.com/markac007/ai-discord-moderator/actions/workflows/security.yml/badge.svg)](https://github.com/markac007/ai-discord-moderator/actions/workflows/security.yml)
-[![Docker Image](https://img.shields.io/docker/pulls/markac007/discord-ai-bot.svg)](https://hub.docker.com/r/markac007/discord-ai-bot)
+[![CI](https://img.shields.io/github/actions/workflow/status/MarkAC007/ai-discord-moderator/test.yml?branch=main&label=CI&logo=github)](https://github.com/MarkAC007/ai-discord-moderator/actions/workflows/test.yml)
+[![Security Scan](https://img.shields.io/github/actions/workflow/status/MarkAC007/ai-discord-moderator/security.yml?branch=main&label=Security&logo=github)](https://github.com/MarkAC007/ai-discord-moderator/actions/workflows/security.yml)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5-blue?logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
+[![Node.js](https://img.shields.io/badge/node-%3E%3D20.0.0-brightgreen?logo=node.js&logoColor=white)](https://nodejs.org/)
+[![Docker Pulls](https://img.shields.io/docker/pulls/markac007/discord-ai-bot)](https://hub.docker.com/r/markac007/discord-ai-bot)
 [![Docker Image Size](https://img.shields.io/docker/image-size/markac007/discord-ai-bot/latest)](https://hub.docker.com/r/markac007/discord-ai-bot)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Node.js](https://img.shields.io/badge/node-%3E%3D20.0.0-brightgreen.svg)](https://nodejs.org/)
-[![TypeScript](https://img.shields.io/badge/TypeScript-5.0%2B-blue.svg)](https://www.typescriptlang.org/)
+[![GitHub Release](https://img.shields.io/github/v/release/MarkAC007/ai-discord-moderator)](https://github.com/MarkAC007/ai-discord-moderator/releases/latest)
+[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](https://opensource.org/licenses/MIT)
+[![Last Commit](https://img.shields.io/github/last-commit/MarkAC007/ai-discord-moderator)](https://github.com/MarkAC007/ai-discord-moderator/commits/main)
 
 A production-ready Discord AI bot with GPT-5 integration, built with TypeScript and deployable via Docker Compose. Features multi-turn conversations with memory and intelligent context management.
 
