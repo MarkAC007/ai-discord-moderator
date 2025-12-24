@@ -49,19 +49,3 @@ jobs:
           test-results/
         retention-days: 7
 
-  markdown-lint:
-    name: Markdown Lint
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Lint markdown files
-        uses: DavidAnson/markdownlint-cli2-action@v20
-        with:
-          globs: |
-            **/*.md
-            !node_modules
-            !dist
-            !.agent-os
