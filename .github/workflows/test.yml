@@ -64,3 +64,4 @@ jobs:
             **/*.md
             !node_modules
             !dist
+            !.agent-os
