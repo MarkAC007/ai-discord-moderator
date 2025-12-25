@@ -6,7 +6,6 @@
 
 <!-- Security -->
 [![Security Scan](https://img.shields.io/github/actions/workflow/status/MarkAC007/ai-discord-moderator/security.yml?branch=main&label=Security&logo=github)](https://github.com/MarkAC007/ai-discord-moderator/actions/workflows/security.yml)
-[![CodeQL](https://img.shields.io/github/actions/workflow/status/MarkAC007/ai-discord-moderator/codeql.yml?branch=main&label=CodeQL&logo=github)](https://github.com/MarkAC007/ai-discord-moderator/actions/workflows/codeql.yml)
 [![Semgrep](https://img.shields.io/github/actions/workflow/status/MarkAC007/ai-discord-moderator/semgrep.yml?branch=main&label=Semgrep&logo=semgrep)](https://github.com/MarkAC007/ai-discord-moderator/actions/workflows/semgrep.yml)
 [![Gitleaks](https://img.shields.io/github/actions/workflow/status/MarkAC007/ai-discord-moderator/gitleaks.yml?branch=main&label=Gitleaks&logo=git)](https://github.com/MarkAC007/ai-discord-moderator/actions/workflows/gitleaks.yml)
 [![License Check](https://img.shields.io/github/actions/workflow/status/MarkAC007/ai-discord-moderator/license-check.yml?branch=main&label=Licenses&logo=github)](https://github.com/MarkAC007/ai-discord-moderator/actions/workflows/license-check.yml)
