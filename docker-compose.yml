@@ -12,6 +12,12 @@ services:
     ports:
       - "${PORT:-3000}:3000"  # Health check endpoint
     restart: unless-stopped
+    # Security hardening
+    read_only: true
+    security_opt:
+      - no-new-privileges:true
+    tmpfs:
+      - /tmp:mode=1777,size=64M
     healthcheck:
       test: ["CMD", "wget", "-q", "--spider", "http://localhost:3000/health"]
       interval: 30s
