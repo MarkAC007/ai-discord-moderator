@@ -1,14 +1,27 @@
 # Discord AI Bot
 
+<!-- Build & Deploy -->
 [![CI](https://img.shields.io/github/actions/workflow/status/MarkAC007/ai-discord-moderator/test.yml?branch=main&label=CI&logo=github)](https://github.com/MarkAC007/ai-discord-moderator/actions/workflows/test.yml)
+[![Docker Build](https://img.shields.io/github/actions/workflow/status/MarkAC007/ai-discord-moderator/docker-build.yml?branch=main&label=Docker&logo=docker)](https://github.com/MarkAC007/ai-discord-moderator/actions/workflows/docker-build.yml)
+
+<!-- Security -->
 [![Security Scan](https://img.shields.io/github/actions/workflow/status/MarkAC007/ai-discord-moderator/security.yml?branch=main&label=Security&logo=github)](https://github.com/MarkAC007/ai-discord-moderator/actions/workflows/security.yml)
+[![CodeQL](https://img.shields.io/github/actions/workflow/status/MarkAC007/ai-discord-moderator/codeql.yml?branch=main&label=CodeQL&logo=github)](https://github.com/MarkAC007/ai-discord-moderator/actions/workflows/codeql.yml)
+[![Semgrep](https://img.shields.io/github/actions/workflow/status/MarkAC007/ai-discord-moderator/semgrep.yml?branch=main&label=Semgrep&logo=semgrep)](https://github.com/MarkAC007/ai-discord-moderator/actions/workflows/semgrep.yml)
+[![Gitleaks](https://img.shields.io/github/actions/workflow/status/MarkAC007/ai-discord-moderator/gitleaks.yml?branch=main&label=Gitleaks&logo=git)](https://github.com/MarkAC007/ai-discord-moderator/actions/workflows/gitleaks.yml)
+[![License Check](https://img.shields.io/github/actions/workflow/status/MarkAC007/ai-discord-moderator/license-check.yml?branch=main&label=Licenses&logo=github)](https://github.com/MarkAC007/ai-discord-moderator/actions/workflows/license-check.yml)
+
+<!-- Tech Stack -->
 [![TypeScript](https://img.shields.io/badge/TypeScript-5-blue?logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
 [![Node.js](https://img.shields.io/badge/node-%3E%3D20.0.0-brightgreen?logo=node.js&logoColor=white)](https://nodejs.org/)
 [![Docker Pulls](https://img.shields.io/docker/pulls/markac007/discord-ai-bot)](https://hub.docker.com/r/markac007/discord-ai-bot)
 [![Docker Image Size](https://img.shields.io/docker/image-size/markac007/discord-ai-bot/latest)](https://hub.docker.com/r/markac007/discord-ai-bot)
+
+<!-- Project Info -->
 [![GitHub Release](https://img.shields.io/github/v/release/MarkAC007/ai-discord-moderator)](https://github.com/MarkAC007/ai-discord-moderator/releases/latest)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](https://opensource.org/licenses/MIT)
 [![Last Commit](https://img.shields.io/github/last-commit/MarkAC007/ai-discord-moderator)](https://github.com/MarkAC007/ai-discord-moderator/commits/main)
+[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](https://github.com/MarkAC007/ai-discord-moderator/pulls)
 
 A production-ready Discord AI bot with GPT-5 integration, built with TypeScript and deployable via Docker Compose. Features multi-turn conversations with memory and intelligent context management.
 

@@ -1,0 +1,52 @@
+name: License Compliance Check
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  schedule:
+    - cron: '0 10 * * 1'  # Weekly on Mondays at 10am UTC
+
+permissions:
+  contents: read
+
+jobs:
+  license-check:
+    name: Check Licenses
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install license-checker
+        run: npm install -g license-checker
+
+      - name: Check licenses
+        run: |
+          echo "## License Report" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+
+          # Generate license report
+          license-checker --summary --out licenses.txt
+          cat licenses.txt >> $GITHUB_STEP_SUMMARY
+
+          # Check for problematic licenses
+          license-checker --failOn "GPL;AGPL;SSPL;BUSL" || {
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "### Warning: Found packages with restricted licenses" >> $GITHUB_STEP_SUMMARY
+            exit 1
+          }
+
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "All licenses checked successfully" >> $GITHUB_STEP_SUMMARY
