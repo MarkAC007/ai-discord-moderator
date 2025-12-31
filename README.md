@@ -1,4 +1,5 @@
 # Discord AI Bot
+[\![Release](https://github.com/MarkAC007/ai-discord-moderator/actions/workflows/auto-release.yml/badge.svg)](https://github.com/MarkAC007/ai-discord-moderator/actions/workflows/auto-release.yml)
 
 <!-- Build & Deploy -->
 [![CI](https://img.shields.io/github/actions/workflow/status/MarkAC007/ai-discord-moderator/test.yml?branch=main&label=CI&logo=github)](https://github.com/MarkAC007/ai-discord-moderator/actions/workflows/test.yml)
